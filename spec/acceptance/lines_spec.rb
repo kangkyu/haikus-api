@@ -24,11 +24,16 @@ resource 'LinesController', type: :request do
     end
   end
 
-  post '/lines' do  
+  post '/lines' do
     example "POST lines, with correct params and correct authorization headers (success)" do
-      client.post "/haikus/#{haiku.id}/lines", {haiku_id: haiku.id, content: "let's make a haiku"}.to_json, headers 
+      client.post "/haikus/#{haiku.id}/lines", {haiku_id: haiku.id, content: "let's make a haiku"}.to_json, headers
       expect(status).to eq(201)
       expect(Line.last.content).to eq("let's make a haiku")
+    end
+
+    example 'error with invalid params' do
+      post "/haikus/#{haiku.id}/lines", {}.to_json, headers
+      expect(response.status).to eq(400)
     end
   end
 
@@ -38,6 +43,11 @@ resource 'LinesController', type: :request do
       expect(status).to eq(200)
       line.reload
       expect(body['data']['attributes']['content']).to eq("haiku has been updated!")
+    end
+
+    example 'error with invalid params' do
+      put "/haikus/#{haiku.id}/lines/#{line.id}", {content: nil}.to_json, headers
+      expect(response.status).to eq(400)
     end
   end
 
