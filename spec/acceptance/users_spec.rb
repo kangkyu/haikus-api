@@ -17,6 +17,11 @@ resource 'UsersController', type: :request do
       client.post '/users', { email: 'newuser@example.com', password: 'password' }.to_json, headers
       expect(body["data"]["attributes"]["email"]).to eq('newuser@example.com')
     end
+
+    example 'error with invalid params' do
+      post '/users', {}, headers
+      expect(response.status).to eq(400)
+    end
   end
 
   delete '/users' do

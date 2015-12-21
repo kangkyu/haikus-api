@@ -5,7 +5,7 @@ resource 'HaikusController', type: :request do
   let(:api_key) { FactoryGirl.create(:api_key) }
   let!(:haikus_list) {FactoryGirl.create_list(:haiku, 5, {"lines_attributes": {"0": {"content": "Haiku line"}}})}
   let(:body) { JSON.parse(response_body) }
-    
+
   before do
     header "Accept", "application/json"
     header "Content-Type", "application/json"
@@ -17,6 +17,12 @@ resource 'HaikusController', type: :request do
       client.get "/haikus", nil, headers
       expect(status).to eq(200)
       expect(body['data'].length).to eq(5)
+    end
+
+    example 'GET haikus with first line of each' do
+      client.get "/haikus", nil, headers
+      line = body['data'][0]['attributes']['first_line']
+      expect(line).to eq("Haiku line")
     end
   end
 
@@ -45,6 +51,11 @@ resource 'HaikusController', type: :request do
       expect(status).to eq(201)
       expect(body["data"][0]["attributes"]["content"]).to eq("haiku line")
     end
+
+    example 'error with invalid params' do
+      post '/haikus', {}, headers
+      expect(response.status).to eq(400)
+    end
   end
 
   patch '/haikus' do
@@ -54,6 +65,11 @@ resource 'HaikusController', type: :request do
       expect(status).to eq(200)
       haiku.reload
       expect(body['data'].first['attributes']['content']).to eq("updated haiku line")
+    end
+
+    example 'error with invalid params' do
+      put "/haikus/#{haiku.id}", {content: nil}.to_json, headers
+      expect(response.status).to eq(400)
     end
   end
 

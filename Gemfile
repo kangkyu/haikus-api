@@ -10,7 +10,7 @@ gem 'figaro'
 gem 'rspec_api_documentation'
 
 group :development, :test do
-  gem 'spring'  
+  gem 'spring'
   gem 'byebug'
   gem 'factory_girl_rails'
   gem 'rspec-rails', '~> 3.0'
