@@ -2,3 +2,6 @@
 /haikus-api_development
 /haikus-api_test
 /tmp
+
+/public/coverage
+/public/docs
